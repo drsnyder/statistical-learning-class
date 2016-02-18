@@ -1,0 +1,7 @@
+Area of a cube is L^dim where L is the side length and dim is the number of
+dimensions. To compute the area that is inside 0.05 and outside 0.95 we can
+first compute the area inside which is 0.9^50. The remaining area which we would
+like to measure is then 1-0.9^50.
+
+It's interesting to note that as dim gets larger more and more of the hypercube
+lies in this 10% space at the edges.
