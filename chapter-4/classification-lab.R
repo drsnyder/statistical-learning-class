@@ -65,4 +65,21 @@ mean(knn.pred==Direction[!train])
 # 0.5! no better than flipping a coin!
 
 ## play from R section in Ch 4
+pairs(Smarket) # correlations across all variables
+cor(Smarket) # Direction is qualitative
+
+# 
+cor(Smarket [,-9])
+attach(Smarket)
+# volume goes up a lot over time
+plot(Volume)
+glm.fit=glm(Direction~Lag1+Lag2+Lag3+Lag4+Lag5+Volume, data=Smarket,family=binomial)
+glm.probs=predict(glm.fit, type="response")
+
+glm.pred=rep("Down", length(glm.probs))
+glm.pred[glm.probs>.5]="Up"
+
+# how did we do?
+table(glm.pred,Direction)
+mean(glm.pred==Direction)
 

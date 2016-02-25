@@ -1,6 +1,6 @@
 ### 3.2.R2
 
-t = function(b1, b, se) {
+t=function(b1, b, se) {
   return ((b1 - b) / se);
 }
 
