@@ -73,3 +73,44 @@ load("chapter-5/5.R.RData")
 plot(y~X1+X2,data=Xy)
 glm.fit=glm(y~X1+X2,data=Xy)
 summary(glm.fit)
+
+# get the SE for X1
+summary(glm.fit)$coef[[5]]
+
+# estimate SE of B1 (X1) by bootstrapping
+boot.fn=function(data, index) {
+   coef(lm(y~X1+X2,data=data, subset=index))
+}
+boot.fn(Xy,1:100)
+
+set.seed(1)
+boot.fn(Xy,sample(1000,1000, replace=T))
+
+# using bootstrap
+boot.out=boot(Xy, boot.fn, 1000)
+boot.out
+plot(boot.out)
+
+# block bootstrap to estimate
+new.rows = c(101:200, 401:500, 101:200, 901:1000, 301:400, 1:100, 1:100, 801:900, 201:300, 701:800)
+new.Xy = Xy[new.rows, ]
+boot(new.Xy, boot.fn, 1000)
+
+blocks = c(100, 200, 300, 400, 500, 600, 700, 800, 900, 1000)
+explode_block=function(end) {
+   seq(from=end-99, to=end)
+}
+
+# testing how this works with blocked bootstrap
+# create a block
+block.Xy = Xy[unlist(lapply(sample(blocks, 10, replace=T), explode_block)), ]
+boot.fn(block.Xy,sample(1000,1000, replace=T))
+
+# this is one way to do it correctly-- generate the index internally and ignore
+# the input
+block.fn2=function(data, ignore) {
+  index=unlist(lapply(sample(c(100, 200, 300, 400, 500, 600, 700, 800, 900, 1000), 10, replace=T), explode_block))
+  coef(lm(y~X1+X2,data=data, subset=index))
+}
+block2.out=boot(Xy, block.fn2, 1000)
+block2.out
